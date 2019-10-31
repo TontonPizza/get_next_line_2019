@@ -1,27 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vo-nguye <vo-nguye@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/16 13:28:28 by vo-nguye          #+#    #+#             */
-/*   Updated: 2019/10/16 13:28:28 by vo-nguye         ###   ########.fr       */
+/*   Created: 2019/10/31 22:39:10 by vo-nguye          #+#    #+#             */
+/*   Updated: 2019/10/31 22:39:10 by vo-nguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-unsigned int	ft_strlen(const char *str)
+int main(int argc, char **argv)
 {
-	unsigned int i;
+	int fd1 = open(argv[1], O_RDONLY);
+	int fd2 = open(argv[2], O_RDONLY);
+	char *line;
+	int k = 1;
+	int j = 1;
 
-	i = 0;
-	if (str == NULL)
-		return (0);
-	while (str[i])
+	while (j > 0 || k > 0)
 	{
-		i++;
+		k = get_next_line(fd1, &line);
+		printf("%s\n", line);
+		free(line);
+		j = get_next_line(fd2, &line);
+		printf("%s\n", line);
+		free(line);
 	}
-	return (i);
+
+
+    return (argc + argv[0][0]);
 }

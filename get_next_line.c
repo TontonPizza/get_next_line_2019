@@ -12,20 +12,6 @@
 
 #include "get_next_line.h"
 
-unsigned int	ft_strlen(const char *str)
-{
-	unsigned int i;
-
-	i = 0;
-	if (str == NULL)
-		return (0);
-	while (str[i])
-	{
-		i++;
-	}
-	return (i);
-}
-
 char	*join_and_free(char *s1, char *s2)
 {
 	char	*res;
@@ -54,8 +40,6 @@ char	*join_and_free(char *s1, char *s2)
 	free(tmp);
 	return (res);
 }
-
-
 
 void			set_zero_and_remains(char *line, char *remains)
 {
@@ -92,32 +76,41 @@ int				has_n(char *str)
 	return (-1);
 }
 
+int				init_and_error(int fd, char **line, char *buffer)
+{
+	if (line == NULL || BUFFER_SIZE == 0 || fd == -1 || fd >= 255)
+		return (-1);
+	if (!(*line = malloc(sizeof(char) * 1)))
+		return (-1);
+	*line[0] = 0;
+	buffer[0] = 0;
+	return (0);
+}
 
 int				get_next_line(int fd, char **line)
 {
-	static char		remains[BUFFER_SIZE * 2 + 2];
+	static char		remains[256][BUFFER_SIZE * 2 + 2];
 	char			buffer[BUFFER_SIZE + 1];
 	int				i;
-	int k;
+	int 			k;
 
-	buffer[0] = 0;
-	*line = malloc(sizeof(char) * 1);
-	*line[0] = 0;
-	if (remains[BUFFER_SIZE * 2 + 1] != 42)
+	if (init_and_error(fd, line, buffer) == -1)
+		return (-1);
+	if (remains[fd][BUFFER_SIZE * 2 + 1] != 42)
 	{
-		remains[0] = 0;
-		remains[BUFFER_SIZE * 2 + 1 ] = 42;
+		remains[fd][0] = 0;
+		remains[fd][BUFFER_SIZE * 2 + 1 ] = 42;
 	}
 	else
-		*line = join_and_free(*line, remains);
+		*line = join_and_free(*line, remains[fd]);
 	while ((has_n(*line) == -1) && (i = read(fd, buffer, BUFFER_SIZE)) > 0)
 	{
 		buffer[i] = 0;
 		*line = join_and_free(*line, buffer);
 	}
 	k = has_n(*line);
-	set_zero_and_remains(*line, remains);
+	set_zero_and_remains(*line, remains[fd]);
 	if (k == -1 || fd == -1 || i == -1)
-		remains[BUFFER_SIZE * 2 + 1] = 0;
+		remains[fd][BUFFER_SIZE * 2 + 1] = 0;
 	return ((i == -1 || fd == -1)? -1 : k != -1);
 }
