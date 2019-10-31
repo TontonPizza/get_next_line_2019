@@ -12,6 +12,29 @@
 
 #include "get_next_line.h"
 
+int				has_n(char *str, int mode)
+{
+	int i;
+
+	i = 0;
+	if (mode == 0)
+	{
+		while (str[i] && str[i] != '\n')
+			i++;
+		if (str[i] == '\n')
+			return (i);
+		return (-1);
+	}
+	i = 0;
+	if (str == NULL)
+		return (0);
+	while (str[i])
+	{
+		i++;
+	}
+	return (i);
+}
+
 char	*join_and_free(char *s1, char *s2)
 {
 	char	*res;
@@ -22,8 +45,7 @@ char	*join_and_free(char *s1, char *s2)
 	tmp = s1;
 	i = 0;
 	j = 0;
-	res = (char *)malloc((ft_strlen((char *)s1) + ft_strlen((char *)s2) + 1)
-						 * sizeof(char));
+	res = malloc(sizeof(char) * (has_n(s1, 1) + has_n(s2, 1) + 1));
 	if (res == 0)
 		return (0);
 	while (s1[i])
@@ -64,21 +86,9 @@ void			set_zero_and_remains(char *line, char *remains)
 
 }
 
-int				has_n(char *str)
-{
-	int i;
-
-	i = 0;
-	while (str[i] && str[i] != '\n')
-		i++;
-	if (str[i] == '\n')
-		return (i);
-	return (-1);
-}
-
 int				init_and_error(int fd, char **line, char *buffer)
 {
-	if (line == NULL || BUFFER_SIZE == 0 || fd == -1 || fd >= 255)
+	if (line == NULL || BUFFER_SIZE <= 0 || fd == -1 || fd >= 255)
 		return (-1);
 	if (!(*line = malloc(sizeof(char) * 1)))
 		return (-1);
@@ -103,12 +113,12 @@ int				get_next_line(int fd, char **line)
 	}
 	else
 		*line = join_and_free(*line, remains[fd]);
-	while ((has_n(*line) == -1) && (i = read(fd, buffer, BUFFER_SIZE)) > 0)
+	while ((has_n(*line, 0) == -1) && (i = read(fd, buffer, BUFFER_SIZE)) > 0)
 	{
 		buffer[i] = 0;
 		*line = join_and_free(*line, buffer);
 	}
-	k = has_n(*line);
+	k = has_n(*line, 0);
 	set_zero_and_remains(*line, remains[fd]);
 	if (k == -1 || fd == -1 || i == -1)
 		remains[fd][BUFFER_SIZE * 2 + 1] = 0;

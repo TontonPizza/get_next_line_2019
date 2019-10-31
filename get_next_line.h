@@ -24,7 +24,5 @@
 # include <stdio.h>
 
 int				get_next_line(int fd, char **line);
-unsigned int	ft_strlen(const char *str);
-
 
 #endif
