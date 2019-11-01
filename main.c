@@ -23,16 +23,26 @@ int main(int argc, char **argv)
 	int k = 1;
 	int j = 1;
 
-	while (j > 0 || k > 0)
+	while (k > 0)
 	{
 		k = get_next_line(fd1, &line);
 		printf("%s\n", line);
-		free(line);
+		if (k >= 0)
+		{
+			free(line);
+			line = NULL;
+		}
+	}
+	while (j > 0 )
+	{
 		j = get_next_line(fd2, &line);
 		printf("%s\n", line);
-		free(line);
+		if (j >= 0)
+		{
+			free(line);
+			line = NULL;
+		}
 	}
-
 
     return (argc + argv[0][0]);
 }

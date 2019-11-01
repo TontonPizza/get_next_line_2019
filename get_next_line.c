@@ -35,7 +35,7 @@ int				has_n(char *str, int mode)
 	return (i);
 }
 
-char	*join_and_free(char *s1, char *s2)
+char			*join_and_free(char *s1, char *s2)
 {
 	char	*res;
 	int		i;
@@ -83,7 +83,6 @@ void			set_zero_and_remains(char *line, char *remains)
 		}
 	}
 	remains[j] = 0;
-
 }
 
 int				init_and_error(int fd, char **line, char *buffer)
@@ -99,17 +98,17 @@ int				init_and_error(int fd, char **line, char *buffer)
 
 int				get_next_line(int fd, char **line)
 {
-	static char		remains[256][BUFFER_SIZE * 2 + 2];
+	static char		remains[256][BUFFER_SIZE + 2];
 	char			buffer[BUFFER_SIZE + 1];
 	int				i;
-	int 			k;
+	int				k;
 
 	if (init_and_error(fd, line, buffer) == -1)
 		return (-1);
-	if (remains[fd][BUFFER_SIZE * 2 + 1] != 42)
+	if (remains[fd][BUFFER_SIZE + 1] != 42)
 	{
 		remains[fd][0] = 0;
-		remains[fd][BUFFER_SIZE * 2 + 1 ] = 42;
+		remains[fd][BUFFER_SIZE + 1] = 42;
 	}
 	else
 		*line = join_and_free(*line, remains[fd]);
@@ -121,6 +120,6 @@ int				get_next_line(int fd, char **line)
 	k = has_n(*line, 0);
 	set_zero_and_remains(*line, remains[fd]);
 	if (k == -1 || fd == -1 || i == -1)
-		remains[fd][BUFFER_SIZE * 2 + 1] = 0;
-	return ((i == -1 || fd == -1)? -1 : k != -1);
+		remains[fd][BUFFER_SIZE + 1] = 0;
+	return ((i == -1 || fd == -1) ? -1 : k != -1);
 }
