@@ -12,6 +12,11 @@
 
 #include "get_next_line.h"
 
+//cette fonction, si tu mets mode = 0; ça compte la position du premier \n dans la string
+//si y'en a pas, ça renvoie -1;
+//
+//en mode = 1; c'est juste un strlen
+
 int				has_n(char *str, int mode)
 {
 	int i;
@@ -34,6 +39,8 @@ int				has_n(char *str, int mode)
 	}
 	return (i);
 }
+
+// un strjoin qui free la chaine initiale
 
 char			*join_and_free(char *s1, char *s2)
 {
@@ -63,6 +70,10 @@ char			*join_and_free(char *s1, char *s2)
 	return (res);
 }
 
+//si t'as une chaine de caractere aaaaaaaaaa\nbbbb;
+//ça va metre un \0 a la place du n, donc la chaine sera aaaaaaaa
+//et les bbbbb seront mis dans le reste
+
 void			set_zero_and_remains(char *line, char *remains)
 {
 	int i;
@@ -87,7 +98,7 @@ void			set_zero_and_remains(char *line, char *remains)
 
 int				init_and_error(int fd, char **line, char *buffer)
 {
-	if (line == NULL || BUFFER_SIZE <= 0 || fd == -1 || fd >= 255)
+	if (line == NULL || BUFFER_SIZE <= 0 || fd <= -1 || fd >= 255)
 		return (-1);
 	if (!(*line = malloc(sizeof(char) * 1)))
 		return (-1);
@@ -95,6 +106,13 @@ int				init_and_error(int fd, char **line, char *buffer)
 	buffer[0] = 0;
 	return (0);
 }
+
+//en gros : on vérifie avec le != 42 si c'est le premier appel pour ce buffer la; la valeur 42 est arbitraire
+//si c'est le premier call on initie les trucs comme il faut'
+//
+// pour l'algo, on strjoin la line avec le reste, puis on join la line avec ce qu'on lit dans le fichier tant que y'a pas de \n dedans
+// a la fin, on met le 0 dans la line au premier \n trouvé, et ce qui suit ce premier \n est mis dans le reste.
+// si y'avait un \n dans la line, faut renvoyer 1 (d'ou le k =)
 
 int				get_next_line(int fd, char **line)
 {
